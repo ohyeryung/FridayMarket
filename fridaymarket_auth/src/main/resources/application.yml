@@ -2,3 +2,33 @@ spring:
   application:
     name: fridaymarket_auth
 
+  # .env import
+  config:
+    import: optional:file:.env[.properties]
+
+  datasource:
+    url: jdbc:mariaDB://${DB_HOST}:${DB_PORT}/${DB_NAME}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.mariadb.jdbc.Driver
+
+  jpa:
+    open-in-view: true
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        ddl-auto: none
+        id:
+          new_generator_mappings: true
+      dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+
+# jwt Secret Key
+jwt:
+  secretkey: ${JWT_SECRET_KEY}
