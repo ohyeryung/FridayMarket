@@ -1,0 +1,28 @@
+version: "3.9"
+
+services:
+  mariadb:
+    image: mariadb:latest
+    container_name: ${DB_CONTAINER_NAME}
+    ports:
+      - ${DB_PORT}:3306
+    restart: always
+    environment:
+      MARIADB_DATABASE: ${DB_NAME}
+      MARIADB_ROOT_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - mariadb-vl:/var/lib/mysql
+
+  redis:
+    image: redis:latest
+    container_name: ${REDIS_CONTAINER_NAME}
+    ports:
+      - ${REDIS_PORT}:6379
+    volumes:
+      - redis-vl:/data
+
+volumes:
+  mariadb-vl:
+    driver: local
+  redis-vl:
+    driver: local
