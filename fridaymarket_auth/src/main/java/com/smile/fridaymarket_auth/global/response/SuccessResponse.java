@@ -7,19 +7,19 @@ import lombok.Getter;
 @Builder
 public class SuccessResponse<T> {
 
-    private Result result;
+    private boolean success;
     private String message;
     private T data;
 
     private static <T> SuccessResponse<T> success(T data, String message) {
         return SuccessResponse.<T>builder()
-                .result(Result.SUCCESS)
+                .success(true)
                 .message(message)
                 .data(data)
                 .build();
     }
 
-    public static <T> SuccessResponse<T> success(T data) {
+    public static <T> SuccessResponse<T> successWithData(T data) {
         return success(data, "OK");
     }
 
@@ -27,7 +27,4 @@ public class SuccessResponse<T> {
         return success(null, message);
     }
 
-    public enum Result {
-        SUCCESS, FAIL
-    }
 }
