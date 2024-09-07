@@ -6,6 +6,7 @@ import com.smile.fridaymarket_auth.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
 
@@ -19,7 +20,8 @@ public class UserStoreImpl implements UserStore {
 
 
     @Override
-    public User store(User initUser) {
+    @Transactional
+    public void store(User initUser) {
 
         User user = User.builder()
                 .username(initUser.getUsername())
@@ -31,7 +33,7 @@ public class UserStoreImpl implements UserStore {
                 .isDeleted(false)
                 .build();
 
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
 }
