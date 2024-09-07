@@ -4,8 +4,10 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
-public class ErrorCode {
+public enum ErrorCode {
 
+    ILLEGAL_USERNAME_DUPLICATION(HttpStatus.BAD_REQUEST,  "중복된 아이디입니다.");
+    
     private final HttpStatus httpStatus;
     private final String message;
 

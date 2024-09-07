@@ -62,9 +62,10 @@ public class GlobalExceptionHandler {
 
         log.error("handleBindException : {}", ex.getMessage());
 
-
         String message = ex.getMessage();
-        String defaultMsg = message.substring(message.lastIndexOf("[") + 1, message.lastIndexOf("]")); // "[" 또는 "]" 기준으로 메시지 추출
+
+        String defaultMsg = message.substring(message.lastIndexOf("[") + 1, message.lastIndexOf("]") - 1); // "[" 또는 "]" 기준으로 메시지 추출
+        log.error("에러 메세지 : {}", defaultMsg);
 
         ErrorResponse response = ErrorResponse.create()
                 .message(defaultMsg)
