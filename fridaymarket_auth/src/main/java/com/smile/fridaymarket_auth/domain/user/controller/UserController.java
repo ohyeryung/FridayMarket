@@ -1,11 +1,13 @@
 package com.smile.fridaymarket_auth.domain.user.controller;
 
+import com.smile.fridaymarket_auth.domain.user.dto.LoginRequest;
 import com.smile.fridaymarket_auth.domain.user.dto.UserCreateRequest;
 import com.smile.fridaymarket_auth.domain.user.service.UserService;
 import com.smile.fridaymarket_auth.global.response.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,12 +25,20 @@ public class UserController {
     @Operation(summary = "회원가입", description = "회원가입")
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<SuccessResponse<String>> signup(@Valid @RequestBody UserCreateRequest userCreateRequest) {
+
         userService.signup(userCreateRequest);
         SuccessResponse<String> response = SuccessResponse.successWithNoData("CREATED");
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED) // 응답 상태 코드 설정
-                .body(response); // 본문에 SuccessResponse 포함
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @Operation(summary = "로그인", description = "로그인")
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public ResponseEntity<SuccessResponse<String>> login(@Valid @RequestBody LoginRequest loginRequest) {
+
+        HttpHeaders httpHeaders = userService.login(loginRequest);
+        SuccessResponse<String> response = SuccessResponse.successWithNoData("OK");
+        return ResponseEntity.status(200).headers(httpHeaders).body(response);
     }
 
 
