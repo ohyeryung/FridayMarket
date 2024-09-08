@@ -71,7 +71,6 @@ class UserControllerTest {
     void setUp() {
 
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-
         MockitoAnnotations.openMocks(this);
 
         User mockUser = User.builder()
@@ -90,7 +89,6 @@ class UserControllerTest {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         securityContext.setAuthentication(
                 new UsernamePasswordAuthenticationToken(mockUserDetails, null, mockUserDetails.getAuthorities()));
-
     }
 
     @AfterEach
@@ -209,7 +207,6 @@ class UserControllerTest {
 
         // given: 임시 AccessToken을 생성합니다.
         String token = "Bearer " + generateTokenForUser(user);
-
 
         // when & then: HTTP GET 요청을 수행하고, 상태 코드가 200(OK)인지 확인하며, 응답의 data 필드에 유저 정보가 포함되어 있는지 검증합니다.
         mockMvc.perform(get("/api/users")
