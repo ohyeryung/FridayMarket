@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum ErrorCode {
 
-    ILLEGAL_USERNAME_DUPLICATION(HttpStatus.BAD_REQUEST,  "중복된 아이디입니다."),
+    ILLEGAL_USERNAME_DUPLICATION(HttpStatus.BAD_REQUEST,  "이미 가입된 아이디입니다."),
     ILLEGAL_USER_NOT_EXIST(HttpStatus.BAD_REQUEST, "가입되지 않은 아이디입니다."),
 
     ILLEGAL_PASSWORD_NOT_VALID(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다.");
