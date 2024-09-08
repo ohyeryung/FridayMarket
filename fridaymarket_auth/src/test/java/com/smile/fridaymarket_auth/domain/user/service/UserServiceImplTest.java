@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.validation.BindException;
 
 import java.util.Set;
 
@@ -37,16 +38,16 @@ class UserServiceImplTest {
 
     @Test
     @DisplayName("회원가입 해피 케이스 테스트입니다.")
-    void signup() {
+    void signupWithSuccess() {
         // given: UserCreateRequest 객체를 생성합니다.
         UserCreateRequest request = UserCreateRequest.builder()
                 .username("testUser")
-                .password("testPassword")
+                .password("testPassword!")
                 .phoneNumber("01012345678")
                 .build();
 
 
-        // when: signup 메서드를 호출합니다.
+        // when: 회원가입을 시도합니다.
         userService.signup(request);
 
         // then: 사용자 정보가 데이터베이스에 저장되었는지 확인합니다.
@@ -57,6 +58,31 @@ class UserServiceImplTest {
         assertThat(savedUser.getPhoneNumber()).isEqualTo("01012345678");
         assertThat(savedUser.getUserRole()).containsExactly(UserRole.NORMAL);
 
+    }
+
+    @Test
+    @DisplayName("이미 존재하는 아이디로 회원가입을 진행합니다.")
+    void signupWithExistUsername() {
+        // given : 새 유저 객체 생성 및 저장합니다.
+        User user = User.builder()
+                .username("testUser")
+                .password("testPassword!")
+                .phoneNumber("01012345678")
+                .userRole(Set.of(UserRole.NORMAL))
+                .isDeleted(false)
+                .build();
+        userRepository.save(user);
+
+        // when : 기존의 유저 아이디로 회원가입을 시도합니다.
+        UserCreateRequest request = UserCreateRequest.builder()
+                .username("testUser")
+                .password("testPassword~")
+                .phoneNumber("01087654321")
+                .build();
+
+        // then : 이미 가입된 아이디라는 예외가 발생합니다.
+        CustomException exception = assertThrows(CustomException.class, () -> userService.signup(request));
+        assertEquals(ErrorCode.ILLEGAL_USERNAME_DUPLICATION, exception.getErrorCode());
     }
 
 }
