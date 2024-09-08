@@ -4,9 +4,12 @@ import com.smile.fridaymarket_auth.domain.auth.token.entity.RefreshToken;
 import com.smile.fridaymarket_auth.domain.auth.token.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
+
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Component
 @RequiredArgsConstructor
@@ -36,5 +39,38 @@ public class RefreshTokenManager {
         refreshTokenRepository.save(new RefreshToken(refreshToken, username));
         return refreshToken;
     }
+
+    /**
+     * RefreshToken의 유효성을 검증합니다.
+     *
+     * @param refreshToken 검증할 RefreshToken
+     * @return 유저 아이디 반환, 유효하지 않은 경우 null
+     */
+    public String validateRefreshToken(String refreshToken) {
+
+        Optional<RefreshToken> token = refreshTokenRepository.findByUsername(refreshToken);
+        return token.map(RefreshToken::username).orElse(null);
+    }
+
+    /**
+     * RefreshToken을 검증하고 새로운 AccessToken을 생성합니다.
+     *
+     * @param refreshToken 검증할 RefreshToken
+     * @return 새로 생성된 AccessToken을 담은 HttpHeaders
+     */
+    public HttpHeaders refreshAccessToken(String refreshToken) {
+
+        String username = validateRefreshToken(refreshToken);
+
+        if (username == null) {
+            throw new IllegalArgumentException("유효하지 않은 RefreshToken 입니다.");
+        }
+
+        String newAccessToken = jwtTokenUtils.generateAccessToken(username);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(AUTHORIZATION, "Bearer " + newAccessToken);
+        return headers;
+    }
+
 
 }
