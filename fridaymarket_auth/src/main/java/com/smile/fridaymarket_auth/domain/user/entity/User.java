@@ -42,12 +42,9 @@ public class User extends Timestamped {
     @Column(name = "IS_DELETED", nullable = false)
     private Boolean isDeleted = false;
 
-    public void update(User updateUser) {
-        this.username = updateUser.getUsername();
-        this.password = updateUser.getPassword();;
-        this.phoneNumber = updateUser.getPhoneNumber();
-        this.userRole = updateUser.getUserRole();
-        this.isDeleted = updateUser.getIsDeleted();
+    public void updatePhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+
     }
 
 }

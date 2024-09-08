@@ -80,10 +80,11 @@ public class UserServiceImpl implements UserService {
     public UserInfo updateUserInfo(String username, UserUpdateRequest updateRequest) {
         // 유저 아이디로 유저 검증 및 객체 조회
         User updateUser = userReader.getUserByUsername(username);
-        // 정보 업데이트
-        User initUser = updateRequest.toEntity(updateUser);
-        updateUser.update(initUser);
-        // 아이디와 수정된 전화번호를 담아 반환
+
+        // 유효성 검사 통과한 전화번호만 업데이트
+        updateUser.updatePhoneNumber(updateRequest.getPhoneNumber());
+
+        // 유저 정보 반환 (자동으로 영속성 컨텍스트가 변경 사항을 감지하여 DB에 반영)
         return UserInfo.fromEntity(updateUser);
     }
 
