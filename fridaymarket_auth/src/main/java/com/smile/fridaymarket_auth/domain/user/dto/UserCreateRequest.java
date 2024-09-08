@@ -5,9 +5,11 @@ import com.smile.fridaymarket_auth.domain.user.service.validation.ValidPassword;
 import com.smile.fridaymarket_auth.domain.user.service.validation.ValidPhoneNumber;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@Builder
 public class UserCreateRequest {
 
     @NotBlank(message = "아이디는 필수 값입니다.")
