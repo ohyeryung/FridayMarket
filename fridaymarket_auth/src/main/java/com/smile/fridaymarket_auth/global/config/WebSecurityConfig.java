@@ -1,7 +1,7 @@
 package com.smile.fridaymarket_auth.global.config;
 
 import com.smile.fridaymarket_auth.domain.auth.JwtAuthenticationFilter;
-import com.smile.fridaymarket_auth.domain.auth.token.TokenProvider;
+import com.smile.fridaymarket_auth.domain.auth.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,7 +27,7 @@ public class WebSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    private final TokenProvider tokenProvider;
+    private final JwtTokenProvider jwtTokenProvider;
 
 
     @Bean
@@ -41,7 +41,7 @@ public class WebSecurityConfig {
                                 "/swagger-ui.html").permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(new JwtAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

@@ -3,6 +3,7 @@ package com.smile.fridaymarket_auth.domain.user.service;
 import com.smile.fridaymarket_auth.domain.auth.UserAuth;
 import com.smile.fridaymarket_auth.domain.user.dto.LoginRequest;
 import com.smile.fridaymarket_auth.domain.user.dto.UserCreateRequest;
+import com.smile.fridaymarket_auth.domain.user.dto.UserInfo;
 import com.smile.fridaymarket_auth.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -48,6 +49,22 @@ public class UserServiceImpl implements UserService {
         // 헤더에 Access 토큰 및 Refresh 토큰 생성 후 전달
         return userAuth.generateHeaderTokens(user);
 
+    }
+
+    /**
+     * 3. 회원정보 조회
+     *
+     * @param username 유저 아이디
+     * @return 해당 유저의 아이디와 전화번호가 담긴 UserInfo 반환
+     */
+    @Override
+    @Transactional
+    public UserInfo getUserInfo(String username) {
+
+        // 유저 아이디로 유저 검증 및 객체 조회
+        User userByUsername = userReader.getUserByUsername(username);
+
+        return UserInfo.fromEntity(userByUsername);
     }
 
 
