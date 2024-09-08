@@ -8,4 +8,6 @@ public interface UserReader {
 
     User getUser(String username, String password);
 
+    User getUserByUsername(String username);
+
 }

@@ -1,7 +1,9 @@
 package com.smile.fridaymarket_auth.domain.user.controller;
 
+import com.smile.fridaymarket_auth.domain.auth.UserDetailsImpl;
 import com.smile.fridaymarket_auth.domain.user.dto.LoginRequest;
 import com.smile.fridaymarket_auth.domain.user.dto.UserCreateRequest;
+import com.smile.fridaymarket_auth.domain.user.dto.UserInfo;
 import com.smile.fridaymarket_auth.domain.user.service.UserService;
 import com.smile.fridaymarket_auth.global.response.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -41,5 +44,11 @@ public class UserController {
         return ResponseEntity.status(200).headers(httpHeaders).body(response);
     }
 
+    @Operation(summary = "회원 정보 조회", description = "회원 정보 조회")
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public SuccessResponse<UserInfo> getUserInfo(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        return SuccessResponse.successWithData(userService.getUserInfo(userDetails.getUsername()));
+    }
 
 }
