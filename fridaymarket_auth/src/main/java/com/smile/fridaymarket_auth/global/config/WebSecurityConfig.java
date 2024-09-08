@@ -29,7 +29,6 @@ public class WebSecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
 
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
@@ -38,7 +37,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, ("/api/users/**")).permitAll()
                         .requestMatchers("/swagger-ui/**",
-                                "/swagger-ui.html").permitAll()
+                                "/swagger-ui.html", "/api/refresh").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);

@@ -225,9 +225,7 @@ class UserServiceImplTest {
                 .build();
 
         // when & then: DB에 유저가 존재하지 않을 때 400 에러코드와 해당 에러 메세지와 함께 예외가 발생합니다.
-        CustomException exception = assertThrows(CustomException.class, () -> {
-            userService.updateUserInfo(nonExistentUsername, request);
-        });
+        CustomException exception = assertThrows(CustomException.class, () -> userService.updateUserInfo(nonExistentUsername, request));
         assertEquals(ErrorCode.ILLEGAL_USER_NOT_EXIST, exception.getErrorCode());
 
     }
