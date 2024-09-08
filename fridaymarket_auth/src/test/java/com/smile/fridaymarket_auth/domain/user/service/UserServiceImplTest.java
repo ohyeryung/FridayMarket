@@ -8,7 +8,6 @@ import com.smile.fridaymarket_auth.domain.user.repository.UserRepository;
 import com.smile.fridaymarket_auth.global.exception.CustomException;
 import com.smile.fridaymarket_auth.global.exception.ErrorCode;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.validation.BindException;
 
-import java.util.Base64;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -165,4 +162,22 @@ class UserServiceImplTest {
         assertEquals(ErrorCode.ILLEGAL_PASSWORD_NOT_VALID, exception.getErrorCode());
     }
 
+    @Test
+    @DisplayName("가입되지 않은 유저의 정보를 조회합니다.")
+    void getUserInfoWithNotExistUser() {
+        // given: 테스트에 사용할 유저를 생성 및 저장합니다.
+        User user = User.builder()
+                .username("testUser")
+                .password(passwordEncoder.encode("testPassword!"))
+                .phoneNumber("01012345678")
+                .userRole(Set.of(UserRole.NORMAL))
+                .isDeleted(false)
+                .build();
+        userRepository.save(user);
+
+        // when && then : 가입되지 않은 유저 아이디로 회원 정보 조회 시도 시 해당 에러 메세지와 함께 예외가 발생합니다.
+        CustomException exception = assertThrows(CustomException.class, () -> userService.getUserInfo("NotExistUser"));
+        assertEquals(ErrorCode.ILLEGAL_USER_NOT_EXIST, exception.getErrorCode());
+
+    }
 }
