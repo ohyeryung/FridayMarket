@@ -3,6 +3,7 @@ package com.smile.fridaymarket_auth.domain.user.service;
 import com.smile.fridaymarket_auth.domain.user.dto.LoginRequest;
 import com.smile.fridaymarket_auth.domain.user.dto.UserCreateRequest;
 import com.smile.fridaymarket_auth.domain.user.dto.UserInfo;
+import com.smile.fridaymarket_auth.domain.user.dto.UserUpdateRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
@@ -15,5 +16,7 @@ public interface UserService {
     HttpHeaders login(LoginRequest loginRequest);
 
     UserInfo getUserInfo(String username);
+
+    UserInfo updateUserInfo(String username, UserUpdateRequest updateRequest);
 
 }

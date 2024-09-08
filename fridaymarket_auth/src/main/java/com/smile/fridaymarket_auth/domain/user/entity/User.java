@@ -1,5 +1,6 @@
 package com.smile.fridaymarket_auth.domain.user.entity;
 
+import com.smile.fridaymarket_auth.domain.user.dto.UserUpdateRequest;
 import com.smile.fridaymarket_auth.global.entity.Timestamped;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -40,5 +41,13 @@ public class User extends Timestamped {
 
     @Column(name = "IS_DELETED", nullable = false)
     private Boolean isDeleted = false;
+
+    public void update(User updateUser) {
+        this.username = updateUser.getUsername();
+        this.password = updateUser.getPassword();;
+        this.phoneNumber = updateUser.getPhoneNumber();
+        this.userRole = updateUser.getUserRole();
+        this.isDeleted = updateUser.getIsDeleted();
+    }
 
 }

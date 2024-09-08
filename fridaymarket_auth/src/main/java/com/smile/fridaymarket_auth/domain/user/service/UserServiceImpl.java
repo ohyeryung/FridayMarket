@@ -4,6 +4,7 @@ import com.smile.fridaymarket_auth.domain.auth.UserAuth;
 import com.smile.fridaymarket_auth.domain.user.dto.LoginRequest;
 import com.smile.fridaymarket_auth.domain.user.dto.UserCreateRequest;
 import com.smile.fridaymarket_auth.domain.user.dto.UserInfo;
+import com.smile.fridaymarket_auth.domain.user.dto.UserUpdateRequest;
 import com.smile.fridaymarket_auth.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -67,5 +68,23 @@ public class UserServiceImpl implements UserService {
         return UserInfo.fromEntity(userByUsername);
     }
 
+    /**
+     * 4. 회원정보 수정
+     *
+     * @param username 유저 아이디
+     * @param updateRequest 변경하려는 전화번호
+     * @return 변경된 전화번호와 해당 유저의 아이디 값을 반환
+     */
+    @Override
+    @Transactional
+    public UserInfo updateUserInfo(String username, UserUpdateRequest updateRequest) {
+        // 유저 아이디로 유저 검증 및 객체 조회
+        User updateUser = userReader.getUserByUsername(username);
+        // 정보 업데이트
+        User initUser = updateRequest.toEntity(updateUser);
+        updateUser.update(initUser);
+        // 아이디와 수정된 전화번호를 담아 반환
+        return UserInfo.fromEntity(updateUser);
+    }
 
 }

@@ -4,6 +4,7 @@ import com.smile.fridaymarket_auth.domain.auth.UserDetailsImpl;
 import com.smile.fridaymarket_auth.domain.user.dto.LoginRequest;
 import com.smile.fridaymarket_auth.domain.user.dto.UserCreateRequest;
 import com.smile.fridaymarket_auth.domain.user.dto.UserInfo;
+import com.smile.fridaymarket_auth.domain.user.dto.UserUpdateRequest;
 import com.smile.fridaymarket_auth.domain.user.service.UserService;
 import com.smile.fridaymarket_auth.global.response.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -49,6 +50,14 @@ public class UserController {
     public SuccessResponse<UserInfo> getUserInfo(@AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         return SuccessResponse.successWithData(userService.getUserInfo(userDetails.getUsername()));
+    }
+
+    @Operation(summary = "회원 정보 수정", description = "회원 정보 수정")
+    @RequestMapping(value = "", method = RequestMethod.PATCH)
+    public SuccessResponse<UserInfo> updateUserInfo(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                    @Valid @RequestBody UserUpdateRequest updateRequest) {
+
+        return SuccessResponse.successWithData(userService.updateUserInfo(userDetails.getUsername(), updateRequest));
     }
 
 }
