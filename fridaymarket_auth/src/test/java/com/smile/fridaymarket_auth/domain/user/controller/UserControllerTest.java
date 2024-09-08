@@ -6,6 +6,7 @@ import com.smile.fridaymarket_auth.domain.auth.token.service.JwtTokenUtils;
 import com.smile.fridaymarket_auth.domain.user.dto.LoginRequest;
 import com.smile.fridaymarket_auth.domain.user.dto.UserCreateRequest;
 import com.smile.fridaymarket_auth.domain.user.dto.UserInfo;
+import com.smile.fridaymarket_auth.domain.user.dto.UserUpdateRequest;
 import com.smile.fridaymarket_auth.domain.user.entity.User;
 import com.smile.fridaymarket_auth.domain.user.entity.UserRole;
 import com.smile.fridaymarket_auth.domain.user.repository.UserRepository;
@@ -27,7 +28,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.context.WebApplicationContext;
@@ -35,8 +35,7 @@ import org.springframework.web.context.WebApplicationContext;
 import java.util.Set;
 
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -224,11 +223,28 @@ class UserControllerTest {
 
     }
 
-
     // AccessToken 생성
     private String generateTokenForUser(User user) {
 
         return jwtTokenUtils.generateAccessToken(user.getUsername());
+    }
+
+    @Test
+    @DisplayName("형식에 맞지 않는 전화번호로 회원 정보를 수정합니다.")
+    void updateUserInfoWithNotValidPhoneNumber() throws Exception {
+
+        // given: 형식에 맞지 않는 전화번호를 포함한 UserCreateRequest 객체를 생성합니다.
+        UserUpdateRequest request = UserUpdateRequest.builder()
+                .phoneNumber("invalidPhoneNumber")  // 유효하지 않은 전화번호
+                .build();
+
+        // when & then: HTTP POST 요청을 수행하고, 상태 코드가 400(BadRequest)인지 확인합니다.
+        mockMvc.perform(patch("/api/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false)) // 응답의 success 필드 확인
+                .andExpect(jsonPath("$.message").value("유효하지 않은 전화번호입니다.")); // 응답의 message 필드 확인
     }
 
 }
