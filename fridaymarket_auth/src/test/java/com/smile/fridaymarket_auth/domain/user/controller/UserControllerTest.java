@@ -1,6 +1,7 @@
 package com.smile.fridaymarket_auth.domain.user.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.smile.fridaymarket_auth.domain.user.dto.LoginRequest;
 import com.smile.fridaymarket_auth.domain.user.dto.UserCreateRequest;
 import com.smile.fridaymarket_auth.domain.user.service.UserService;
 import org.junit.jupiter.api.AfterEach;
@@ -93,4 +94,34 @@ class UserControllerTest {
                 .andExpect(status().isBadRequest()); // 예외가 발생해야 합니다.
     }
 
+    @Test
+    @DisplayName("형식에 맞지 않는 아이디로 로그인 합니다.")
+    void loginWithNotValidUsername() throws Exception {
+
+        LoginRequest request = LoginRequest.builder()
+                .username("te")  // 형식에 맞지 않는 아이디
+                .password("testPassword!")
+                .build();
+
+        mockMvc
+                .perform(post("/api/users/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(request)))
+                .andExpect(status().isBadRequest()); // 예외가 발생해야 합니다.
+    }
+
+    @Test
+    @DisplayName("형식에 맞지 않는 비밀번호로 로그인 합니다.")
+    void loginWithNotValidPassword() throws Exception {
+
+        LoginRequest request = LoginRequest.builder()
+                .username("testUser")
+                .password("short") // 형식에 맞지 않는 비밀번호
+                .build();
+
+        mockMvc.perform(post("/api/users/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(request)))
+                .andExpect(status().isBadRequest()); // 예외가 발생해야 합니다.
+    }
 }

@@ -57,9 +57,8 @@ public class UserReaderImpl implements UserReader {
      */
     private void isValidPassword(String comparePassword, String originPassword) {
 
-        if (!passwordEncoder.matches(comparePassword, originPassword)) {
+        if (!passwordEncoder.matches(comparePassword, originPassword))
             throw new CustomException(ILLEGAL_PASSWORD_NOT_VALID);
-        }
     }
 
 }
