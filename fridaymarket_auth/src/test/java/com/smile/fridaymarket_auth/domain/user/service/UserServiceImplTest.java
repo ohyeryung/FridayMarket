@@ -2,6 +2,8 @@ package com.smile.fridaymarket_auth.domain.user.service;
 
 import com.smile.fridaymarket_auth.domain.user.dto.LoginRequest;
 import com.smile.fridaymarket_auth.domain.user.dto.UserCreateRequest;
+import com.smile.fridaymarket_auth.domain.user.dto.UserInfo;
+import com.smile.fridaymarket_auth.domain.user.dto.UserUpdateRequest;
 import com.smile.fridaymarket_auth.domain.user.entity.User;
 import com.smile.fridaymarket_auth.domain.user.entity.UserRole;
 import com.smile.fridaymarket_auth.domain.user.repository.UserRepository;
@@ -179,5 +181,37 @@ class UserServiceImplTest {
         CustomException exception = assertThrows(CustomException.class, () -> userService.getUserInfo("NotExistUser"));
         assertEquals(ErrorCode.ILLEGAL_USER_NOT_EXIST, exception.getErrorCode());
 
+    }
+
+    @Test
+    @DisplayName("회원정보 수정 해피 케이스 테스트입니다.")
+    void updateUserInfoWithSuccess() {
+        // given: 테스트에 사용할 유저를 생성 및 저장합니다.
+        User user = User.builder()
+                .username("testUser")
+                .password(passwordEncoder.encode("testPassword!"))
+                .phoneNumber("01012345678")
+                .userRole(Set.of(UserRole.NORMAL))
+                .isDeleted(false)
+                .build();
+        userRepository.save(user);
+
+        // 변경할 전화번호를 요청 응답으로 받아옵니다.
+        UserUpdateRequest request = UserUpdateRequest.builder()
+                .phoneNumber("01087654321")
+                .build();
+
+        // when : 회원 정보를 수정합니다.
+        UserInfo userInfo = userService.updateUserInfo(user.getUsername(), request);
+
+        // then : 바뀐 정보를 확인합니다.
+        assertEquals("01087654321", userInfo.getPhoneNumber());
+
+        // DB에서 다시 유저를 조회하여 변경 사항이 반영되었는지 확인합니다.
+        User updatedUser = userRepository.findByUsername(user.getUsername())
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 아이디입니다."));
+
+        // DB에 저장된 유저의 전화번호가 업데이트된 번호와 일치하는지 확인합니다.
+        assertEquals("01087654321", updatedUser.getPhoneNumber());
     }
 }
