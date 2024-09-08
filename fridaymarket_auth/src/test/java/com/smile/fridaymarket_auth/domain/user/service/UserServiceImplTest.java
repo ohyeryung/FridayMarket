@@ -214,4 +214,22 @@ class UserServiceImplTest {
         // DB에 저장된 유저의 전화번호가 업데이트된 번호와 일치하는지 확인합니다.
         assertEquals("01087654321", updatedUser.getPhoneNumber());
     }
+
+    @Test
+    @DisplayName("존재하지 않는 유저로 회원정보를 수정합니다.")
+    void updateUserInfoWithNonExistentUser() {
+        // given: 존재하지 않는 유저 아이디로 정보 수정을 시도합니다.
+        String nonExistentUsername = "nonExistentUser";
+        UserUpdateRequest request = UserUpdateRequest.builder()
+                .phoneNumber("01087654321")
+                .build();
+
+        // when & then: DB에 유저가 존재하지 않을 때 400 에러코드와 해당 에러 메세지와 함께 예외가 발생합니다.
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            userService.updateUserInfo(nonExistentUsername, request);
+        });
+        assertEquals(ErrorCode.ILLEGAL_USER_NOT_EXIST, exception.getErrorCode());
+
+    }
+
 }
