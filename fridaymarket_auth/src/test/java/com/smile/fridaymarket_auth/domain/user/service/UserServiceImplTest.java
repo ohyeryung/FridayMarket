@@ -128,4 +128,41 @@ class UserServiceImplTest {
 
     }
 
+    @Test
+    @DisplayName("가입되지 않은 아이디로 로그인 합니다.")
+    void loginWithNotExistUsername() {
+        // given : 가입되지 않은 로그인 request 생성합니다.
+        LoginRequest loginRequest = LoginRequest.builder()
+                .username("notExistUser")
+                .password("testPassword!")
+                .build();
+
+        // when && then : 존재하지 않는 정보로 로그인 시도 시 해당 에러 메세지와 함께 예외가 발생합니다.
+        CustomException exception = assertThrows(CustomException.class, () -> userService.login(loginRequest));
+        assertEquals(ErrorCode.ILLEGAL_USER_NOT_EXIST, exception.getErrorCode());
+    }
+
+    @Test
+    @DisplayName("DB의 비밀번호와 일치하지 않은 비밀번호로 로그인 합니다.")
+    void loginWithNotValidPassword() {
+        // given : 새 유저 객체 생성 및 저장합니다.
+        User user = User.builder()
+                .username("testUser")
+                .password(passwordEncoder.encode("testPassword!"))
+                .phoneNumber("01012345678")
+                .userRole(Set.of(UserRole.NORMAL))
+                .isDeleted(false)
+                .build();
+        userRepository.save(user);
+
+        LoginRequest loginRequest = LoginRequest.builder()
+                .username("testUser")
+                .password("newPassword")
+                .build();
+
+        // when && then : DB의 비밀번호와 일치하지 않은 비밀번호로 로그인 시도 시 해당 에러 메세지와 함께 예외가 발생합니다.
+        CustomException exception = assertThrows(CustomException.class, () -> userService.login(loginRequest));
+        assertEquals(ErrorCode.ILLEGAL_PASSWORD_NOT_VALID, exception.getErrorCode());
+    }
+
 }
