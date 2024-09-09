@@ -8,17 +8,17 @@ import com.smile.fridaymarket_auth.domain.user.dto.UserUpdateRequest;
 import com.smile.fridaymarket_auth.domain.user.service.UserService;
 import com.smile.fridaymarket_auth.global.response.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/users")
@@ -58,6 +58,16 @@ public class UserController {
                                                     @Valid @RequestBody UserUpdateRequest updateRequest) {
 
         return SuccessResponse.successWithData(userService.updateUserInfo(userDetails.getUsername(), updateRequest));
+    }
+
+    @Operation(summary = "로그아웃", description = "로그아웃")
+    @RequestMapping(value = "/logout", method = RequestMethod.DELETE)
+    public SuccessResponse<String> logout(HttpServletRequest servletRequest, @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                          @RequestHeader("Authorization") String accessToken,
+                                          @RequestHeader("RefreshToken") String refreshToken ) {
+        log.info("accessToken : {}", accessToken);
+        log.info("refreshToken : {}", refreshToken);
+        return SuccessResponse.successWithNoData(userService.logout(userDetails.getUsername(), accessToken, refreshToken));
     }
 
 }

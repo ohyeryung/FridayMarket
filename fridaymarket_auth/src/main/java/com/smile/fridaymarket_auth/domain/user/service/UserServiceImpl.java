@@ -1,16 +1,25 @@
 package com.smile.fridaymarket_auth.domain.user.service;
 
+import com.smile.fridaymarket_auth.domain.auth.JwtTokenProvider;
 import com.smile.fridaymarket_auth.domain.auth.UserAuth;
+import com.smile.fridaymarket_auth.domain.auth.token.entity.RefreshToken;
+import com.smile.fridaymarket_auth.domain.auth.token.repository.RefreshTokenRepository;
+import com.smile.fridaymarket_auth.domain.auth.token.service.RefreshTokenManager;
 import com.smile.fridaymarket_auth.domain.user.dto.LoginRequest;
 import com.smile.fridaymarket_auth.domain.user.dto.UserCreateRequest;
 import com.smile.fridaymarket_auth.domain.user.dto.UserInfo;
 import com.smile.fridaymarket_auth.domain.user.dto.UserUpdateRequest;
 import com.smile.fridaymarket_auth.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.concurrent.TimeUnit;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -18,6 +27,10 @@ public class UserServiceImpl implements UserService {
     private final UserReader userReader;
     private final UserStore userStore;
     private final UserAuth userAuth;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final RedisTemplate<String, String> redisTemplate;
+    private final RefreshTokenManager refreshTokenManager;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     /**
      * 1. 회원 가입
@@ -86,6 +99,25 @@ public class UserServiceImpl implements UserService {
 
         // 유저 정보 반환 (자동으로 영속성 컨텍스트가 변경 사항을 감지하여 DB에 반영)
         return UserInfo.fromEntity(updateUser);
+    }
+
+    @Override
+    @Transactional
+    public String logout(String username, String accessToken, String refreshToken) {
+        // 유저 아이디로 객체 검증 및 조회
+        userReader.getUserByUsername(username);
+
+        // accessToken 만료 시간 초기화하여 무력화
+        Long expiration = jwtTokenProvider.getExpiration(accessToken);
+
+        String cleanToken = accessToken.replace("Bearer ", "");  // Bearer 제거
+        redisTemplate.opsForValue().set(cleanToken, "logout", expiration, TimeUnit.MILLISECONDS);
+
+        // refreshToken 삭제하여 무력화
+        RefreshToken findRefreshToken = refreshTokenManager.getRefreshToken(refreshToken);
+        refreshTokenRepository.delete(findRefreshToken);
+
+        return "로그아웃 되었습니다.";
     }
 
 }
