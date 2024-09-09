@@ -2,6 +2,7 @@ package com.smile.fridaymarket_auth.domain.auth.token.service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -12,15 +13,27 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class JwtTokenUtils {
 
-    private static final int ACCESS_TOKEN_VALID_MILLI_SEC = 30 * 60 * 1000; // 30분
-    private static final int REFRESH_TOKEN_VALID_MILLI_SEC = 7 * 24 * 60 * 60 * 1000; // 7일
-    public static final String CLAIM_USERNAME = "USERNAME";
+    @Value("${ACCESS_TOKEN_VALID_MILLI_SEC}")
+    private int ACCESS_TOKEN_VALID_MILLI_SEC;
+
+    @Value("${REFRESH_TOKEN_VALID_MILLI_SEC}")
+    private int REFRESH_TOKEN_VALID_MILLI_SEC;
+
+    @Value("${CLAIM_USERNAME}")
+    private String claimUsername; // 인스턴스 필드
+
+    public static String CLAIM_NAME; // static 필드
+
+    @PostConstruct
+    public void init() {
+        CLAIM_NAME = claimUsername; // 주입된 값을 static 필드에 할당
+    }
 
     @Value("${JWT_ISSUER}")
-    String JWT_ISSUER;
+    private String JWT_ISSUER;
 
     @Value("${JWT_SECRET_KEY}")
-    String JWT_SECRET;
+    private String JWT_SECRET;
 
     /**
      * AccessToken을 생성합니다.
@@ -33,7 +46,7 @@ public class JwtTokenUtils {
         return JWT.create()
                 .withIssuer(JWT_ISSUER)
                 .withClaim("type", "access")
-                .withClaim(CLAIM_USERNAME, username)
+                .withClaim(CLAIM_NAME, username)
                 .withExpiresAt(new Date(System.currentTimeMillis() + ACCESS_TOKEN_VALID_MILLI_SEC))
                 .sign(generateAlgorithm(JWT_SECRET));
     }
@@ -49,7 +62,7 @@ public class JwtTokenUtils {
         return JWT.create()
                 .withIssuer(JWT_ISSUER)
                 .withClaim("type", "refresh")
-                .withClaim(CLAIM_USERNAME, username)
+                .withClaim(CLAIM_NAME, username)
                 .withExpiresAt(new Date(System.currentTimeMillis() + REFRESH_TOKEN_VALID_MILLI_SEC))
                 .sign(generateAlgorithm(JWT_SECRET));
     }
