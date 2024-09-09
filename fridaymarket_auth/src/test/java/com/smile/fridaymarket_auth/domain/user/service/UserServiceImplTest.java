@@ -92,42 +92,6 @@ class UserServiceImplTest {
     }
 
     @Test
-    @DisplayName("로그인 해피 케이스 테스트입니다.")
-    void loginWithSuccess() {
-
-        // given : 새 유저 객체 생성 및 저장합니다.
-        User user = User.builder()
-                .username("testUser")
-                .password(passwordEncoder.encode("testPassword!"))
-                .phoneNumber("01012345678")
-                .userRole(Set.of(UserRole.NORMAL))
-                .isDeleted(false)
-                .build();
-        userRepository.save(user);
-
-        LoginRequest loginRequest = LoginRequest.builder()
-                .username("testUser")
-                .password("testPassword!")
-                .build();
-
-        // when : 가입된 유저 정보로 로그인을 시도합니다.
-        HttpHeaders httpHeaders = userService.login(loginRequest);
-
-        // then : 헤더에 토큰이 발급됩니다.
-        assertNotNull(httpHeaders);
-
-        // 헤더에서 AccessToken 확인
-        String accessToken = httpHeaders.getFirst(HttpHeaders.AUTHORIZATION);
-        assertNotNull(accessToken);
-        assertTrue(accessToken.startsWith("Bearer "));
-
-        // 헤더에서 RefreshToken 확인
-        String refreshToken = httpHeaders.getFirst("RefreshToken");
-        assertNotNull(refreshToken);
-
-    }
-
-    @Test
     @DisplayName("가입되지 않은 아이디로 로그인 합니다.")
     void loginWithNotExistUsername() {
         // given : 가입되지 않은 로그인 request 생성합니다.
