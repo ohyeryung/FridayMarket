@@ -23,6 +23,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.Optional;
 
 import static jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
@@ -62,15 +63,15 @@ public class JwtTokenProvider {
     /**
      * JWT AccessToken 을 기반으로 인증 정보를 생성합니다.
      *
-     * @param token    JWT AccessToken
+     * @param accessToken    JWT AccessToken
      * @param response HTTP 응답 객체
      * @return Authentication 객체 반환
      * @throws IOException 예외 발생 시
      */
-    public Authentication getAuthentication(String token, HttpServletResponse response) throws IOException {
+    public Authentication getAuthentication(String accessToken, HttpServletResponse response) throws IOException {
 
         // 토큰에서 사용자 정보를 추출하여 UserDetails를 로드
-        UserDetails userDetails = userDetailsService.loadUserByUsername(decodeUsername(token, response));
+        UserDetails userDetails = userDetailsService.loadUserByUsername(decodeUsername(accessToken, response));
         return new UsernamePasswordAuthenticationToken(
                 userDetails, "", userDetails.getAuthorities());
     }
@@ -78,19 +79,20 @@ public class JwtTokenProvider {
     /**
      * JWT AccessToken 에서 사용자 계정명을 추출합니다.
      *
-     * @param token    JWT AccessToken
+     * @param accessToken    JWT AccessToken
      * @param response HTTP 응답 객체
      * @return 사용자 계정명 반환
      * @throws IOException 예외 발생 시
      */
-    public String decodeUsername(String token, HttpServletResponse response) throws IOException {
+    public String decodeUsername(String accessToken, HttpServletResponse response) throws IOException {
 
         // 토큰의 유효성을 검사하고, 유효한 경우 사용자 계정명을 추출
-        DecodedJWT decodedJWT = isValidToken(token, response)
+        DecodedJWT decodedJWT = isValidToken(accessToken, response)
                 .orElseThrow(() -> new IllegalArgumentException("유효한 토큰이 아닙니다."));
 
+        log.info("decodedJWT.getClaim() : {}", decodedJWT.getClaim(JwtTokenUtils.CLAIM_NAME));
         return decodedJWT
-                .getClaim(JwtTokenUtils.CLAIM_USERNAME)
+                .getClaim(JwtTokenUtils.CLAIM_NAME)
                 .asString();
     }
 
@@ -132,6 +134,31 @@ public class JwtTokenProvider {
         response.setCharacterEncoding("utf-8");
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다.");
         new ObjectMapper().writeValue(response.getWriter(), errorResponse);
+    }
+
+    /**
+     * accessToken 의 만료시간 초기화
+     *
+     * @param accessToken accessToken
+     * @return 해당 토큰의 초기화된 만료시간 반환
+     */
+    public Long getExpiration(String accessToken) {
+        // accessToken이 'Bearer '로 시작하면 이를 제거
+        if (accessToken.startsWith("Bearer ")) {
+            accessToken = accessToken.substring(7);
+        }
+
+        DecodedJWT jwt;
+        JWTVerifier verifier = JWT
+                .require(generateAlgorithm(JWT_SECRET))
+                .build();
+        jwt = verifier.verify(accessToken);
+        // accessToken 남은 시간
+        Date expiration = jwt.getExpiresAt();
+        log.info("accessToken 남은 시간 : {}", expiration);
+
+        long now = new Date().getTime();
+        return (expiration.getTime() - now);
     }
 
     /**

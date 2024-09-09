@@ -2,13 +2,16 @@ package com.smile.fridaymarket_auth.domain.auth.token.service;
 
 import com.smile.fridaymarket_auth.domain.auth.token.entity.RefreshToken;
 import com.smile.fridaymarket_auth.domain.auth.token.repository.RefreshTokenRepository;
+import com.smile.fridaymarket_auth.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+import static com.smile.fridaymarket_auth.global.exception.ErrorCode.ILLEGAL_REFRESH_TOKEN_NOT_VALID;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Component
@@ -25,6 +28,7 @@ public class RefreshTokenManager {
      * @param username 유저 아이디
      * @return 저장된 RefreshToken
      */
+    @Transactional
     public String saveJwtRefreshToken(final String username) {
 
         String refreshToken = jwtTokenUtils.generateRefreshToken(username);
@@ -38,6 +42,19 @@ public class RefreshTokenManager {
 
         refreshTokenRepository.save(new RefreshToken(refreshToken, username));
         return refreshToken;
+    }
+
+    /**
+     * RefreshToken의 유효성을 검증합니다.
+     *
+     * @param refreshToken jwt 형태의 refreshToken
+     * @return 검증이 완료된 refreshToken 객체 반환
+     */
+    public RefreshToken getRefreshToken(String refreshToken) {
+        return refreshTokenRepository.findByUsername(refreshToken).orElseThrow(
+                () -> new CustomException(ILLEGAL_REFRESH_TOKEN_NOT_VALID)
+        );
+
     }
 
     /**
