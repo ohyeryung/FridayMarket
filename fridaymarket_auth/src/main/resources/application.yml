@@ -38,6 +38,9 @@ logging:
   level:
     org.hibernate: info
 
+server:
+  port: ${SERVER_PORT}
+
 ---
 # 테스트 실행 전용 프로파일
 

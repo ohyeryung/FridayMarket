@@ -2,7 +2,6 @@ spring:
   application:
     name: fridaymarket_resource
 
-
   # .env import
   config:
     import: optional:file:.env[.properties]
@@ -35,6 +34,8 @@ logging:
   level:
     org.hibernate: info
 
+server:
+  port: ${SERVER_PORT}
 ---
 # 테스트 실행 전용 프로파일
 
