@@ -13,6 +13,15 @@
 1. RESTful API를 활용하여 구매, 판매 주문 CRUD를 수행하는 서버 A 구현
 2. 서버 A와 grpc를 통해 소통하며, 인증만을 담당하는 서버 B 구현
 
+## 🛠️ 프로젝트 환경
+
+| Stack                                                                                                        | Version           |
+|:------------------------------------------------------------------------------------------------------------:|:-----------------:|
+| ![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white) | Spring Boot 3.3.x |
+| ![Gradle](https://img.shields.io/badge/Gradle-02303A.svg?style=for-the-badge&logo=Gradle&logoColor=white)    | Gradle 8.8       |
+| ![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)    | JDK 17           |
+| ![MySQL](https://img.shields.io/badge/mariaDB-4479A1.svg?style=for-the-badge&logo=mariaDB&logoColor=white)   | MariaDB 11.5     |
+| ![Redis](https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white)    | Redis 6.0        |
 
 ## Quick Start
 
