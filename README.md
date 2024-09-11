@@ -44,15 +44,10 @@ docker-compose -f ./resource-server/docker-compose-resource.yml up -d
 4. Redis 패스워드 설정
 ```
 1) docker exec -it [CONTAINER ID] redis-cli
-  (위 명령어가 실행되지 않을 경우, 아래 명령어를 실행해주세요.)
-  winpty docker exec -it [CONTAINER ID] redis-cli
-
 2) config get requirepass
 3) config set requirepass [PASSWORD]
 4) config get requirepass
 5) exit
-6) winpty docker exec -it [CONTAINER ID] redis-cli
-7) auth [PASSWORD]
 ```
 5. .env 파일 설정
     <details>
