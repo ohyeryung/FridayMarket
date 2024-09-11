@@ -1,6 +1,5 @@
 package com.smile.fridaymarket_auth.domain.user.entity;
 
-import com.smile.fridaymarket_auth.domain.user.dto.UserUpdateRequest;
 import com.smile.fridaymarket_auth.global.entity.Timestamped;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
