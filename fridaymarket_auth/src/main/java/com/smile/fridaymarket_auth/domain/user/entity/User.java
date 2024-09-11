@@ -37,9 +37,11 @@ public class User extends Timestamped {
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(value = EnumType.STRING)
     @Column(name = "USER_ROLE", length = 20)
+    @Builder.Default
     private Set<UserRole> userRole = new HashSet<>();
 
     @Column(name = "IS_DELETED", nullable = false)
+    @Builder.Default
     private Boolean isDeleted = false;
 
     public void updatePhoneNumber(String phoneNumber) {

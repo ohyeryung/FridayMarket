@@ -4,6 +4,7 @@ package com.smile.fridaymarket_auth.domain.auth;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -63,8 +64,8 @@ public class JwtTokenProvider {
     /**
      * JWT AccessToken 을 기반으로 인증 정보를 생성합니다.
      *
-     * @param accessToken    JWT AccessToken
-     * @param response HTTP 응답 객체
+     * @param accessToken JWT AccessToken
+     * @param response    HTTP 응답 객체
      * @return Authentication 객체 반환
      * @throws IOException 예외 발생 시
      */
@@ -79,8 +80,8 @@ public class JwtTokenProvider {
     /**
      * JWT AccessToken 에서 사용자 계정명을 추출합니다.
      *
-     * @param accessToken    JWT AccessToken
-     * @param response HTTP 응답 객체
+     * @param accessToken JWT AccessToken
+     * @param response    HTTP 응답 객체
      * @return 사용자 계정명 반환
      * @throws IOException 예외 발생 시
      */
@@ -94,6 +95,13 @@ public class JwtTokenProvider {
         return decodedJWT
                 .getClaim(JwtTokenUtils.CLAIM_NAME)
                 .asString();
+    }
+
+    public String getUsernameFromToken(String accessToken) {
+        return String.valueOf(JWT.require(generateAlgorithm(JWT_SECRET))
+                .build()
+                .verify(accessToken)
+                .getClaim("USERNAME"));
     }
 
     /**
@@ -134,6 +142,19 @@ public class JwtTokenProvider {
         response.setCharacterEncoding("utf-8");
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다.");
         new ObjectMapper().writeValue(response.getWriter(), errorResponse);
+    }
+
+    public boolean isValidAccessToken(String accessToken) {
+
+        try {
+            JWTVerifier verifier = JWT.require(generateAlgorithm(JWT_SECRET))
+                    .build();
+            DecodedJWT jwt = verifier.verify(accessToken);
+            return jwt != null;  // jwt가 null이 아니라면 유효한 토큰
+        } catch (JWTVerificationException e) {
+            log.info("JWT 검증 오류: {}", e.getMessage());
+        }
+        return false;
     }
 
     /**
