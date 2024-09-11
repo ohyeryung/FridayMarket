@@ -4,11 +4,13 @@ import com.smile.fridaymarket_auth.domain.user.entity.User;
 import com.smile.fridaymarket_auth.domain.user.repository.UserRepository;
 import com.smile.fridaymarket_auth.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import static com.smile.fridaymarket_auth.global.exception.ErrorCode.*;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class UserReaderImpl implements UserReader {
@@ -55,12 +57,13 @@ public class UserReaderImpl implements UserReader {
      * @param username 사용자 아이디
      * @return 해당 유저 객체 반환
      */
-    @Override
     public User getUserByUsername(String username) {
 
-        return userRepository.findByUsername(username).orElseThrow(
-                () -> new CustomException(ILLEGAL_USER_NOT_EXIST)
-        );
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> {
+                    log.error("사용자 {}를 찾을 수 없습니다.", username);
+                    return new CustomException(ILLEGAL_USER_NOT_EXIST);
+                });
     }
 
     /**
