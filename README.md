@@ -63,4 +63,9 @@ docker-compose -f ./resource-server/docker-compose-resource.yml up -d
 
 ## 트러블슈팅
 
+#### 회원가입 시 발생한 오류 (https://github.com/ohyeryung/FridayMarket/pull/5)
+#### 로그인 기능 구현 시 발생한 오류 (https://github.com/ohyeryung/FridayMarket/pull/9)
+#### AccessToken 재발급 테스트 시 발생한 오류 (https://github.com/ohyeryung/FridayMarket/pull/24)
+#### 로그아웃 기능 구현 시 발생한 오류 (https://github.com/ohyeryung/FridayMarket/pull/26)
+#### gRPC 통신 구현 중 발생한 오류 (https://github.com/ohyeryung/FridayMarket/pull/28)
 
