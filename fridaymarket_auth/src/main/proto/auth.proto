@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+option java_package = "com.smile.fridaymarket_auth.grpc";
+option java_outer_classname = "AuthTokenProto";
+
+service AuthTokenService {
+  rpc VerifyToken(AuthTokenRequest) returns (AuthTokenResponse);
+}
+
+// 요청 객체
+message AuthTokenRequest {
+  string accessToken = 1;
+}
+
+// 응답 객체
+message AuthTokenResponse {
+  bool success =1;
+  string userId = 2;
+  string username = 3;
+}
