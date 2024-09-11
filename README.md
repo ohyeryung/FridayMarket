@@ -124,8 +124,7 @@ docker-compose -f ./resource-server/docker-compose-resource.yml up -d
 
 <br>
 
-## API
-
+## API [Postman API](https://documenter.getpostman.com/view/20456478/2sAXqmB5s5)
 
 <img width="954" alt="인증서버 API 명세" src="https://github.com/user-attachments/assets/501ee75c-51c7-4e36-bb9b-50c48fc80782">
 
