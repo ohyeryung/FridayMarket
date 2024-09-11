@@ -14,17 +14,20 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @ActiveProfiles("test")
+// 테스트가 끝난 후 컨텍스트를 정리하여 데이터베이스 상태가 다른 테스트에 영향을 미치지 않도록 함.
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class UserServiceImplTest {
 
     @Autowired
@@ -51,7 +54,6 @@ class UserServiceImplTest {
                 .password("testPassword!")
                 .phoneNumber("01012345678")
                 .build();
-
 
         // when: 회원가입을 시도합니다.
         userService.signup(request);
