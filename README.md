@@ -30,20 +30,28 @@ docker-compose -f ./resource-server/docker-compose-resource.yml up -d
 
 인증서버 ERD
 
+![FridayMarket__Auth_ERD_최최종](https://github.com/user-attachments/assets/287fcd24-a623-4f7f-9429-f751393c0817)
+
 <br>
 
 자원서버 ERD
+![FridayMarket_Resource](https://github.com/user-attachments/assets/07e5b6b2-0e44-48f9-8f8b-bfa7d765e005)
 
 
 <br>
 
 ## API
 
-인증서버 API
+
+<img width="954" alt="인증서버 API 명세" src="https://github.com/user-attachments/assets/501ee75c-51c7-4e36-bb9b-50c48fc80782">
 
 <br>
 
-자원서버 API
+
+<img width="1174" alt="자원서버 API 명세" src="https://github.com/user-attachments/assets/76b59ede-7f7d-49ac-bef0-d7fde0897da9">
+
+<br>
 
 ## 트러블슈팅
+
 
