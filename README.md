@@ -1,6 +1,8 @@
 # 금방주식회사 백엔드 기업과제_FridayMarket
 금을 판매하고 구매하는 웹 서비스입니다.
 
+<br>
+
 ## 🚀 도전 과제
 
 금을 한창 열심히 팔고 있던 알레테이아는, 금을 판매하고 구매하는 서비스를 제공하기로 결정했습니다!
@@ -8,10 +10,7 @@
 인증을 담당하는 서버를 별도로 구축하기로 결정했는데요,
 과연 어떻게 해야 잘 만들 수 있을까요?
 
-## ✍️ 메인 과제 목표
-
-1. RESTful API를 활용하여 구매, 판매 주문 CRUD를 수행하는 서버 A 구현
-2. 서버 A와 grpc를 통해 소통하며, 인증만을 담당하는 서버 B 구현
+<br>
 
 ## 🛠️ 프로젝트 환경
 
@@ -23,11 +22,18 @@
 | ![MySQL](https://img.shields.io/badge/mariaDB-4479A1.svg?style=for-the-badge&logo=mariaDB&logoColor=white)   | MariaDB 11.5     |
 | ![Redis](https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white)    | Redis 6.0        |
 
+<br>
+
 ## Quick Start
 
+1. 해당 프로젝트를 clone 받아주세요.
 ``` 
 git clone https://github.com/ohyeryung/FridayMarket.git 
 ```
+
+2. Docker 및 Docker Compose가 설치되어 있어야 합니다. (버전 20.10 이상 권장)
+3. 데이터베이스 실행
+애플리케이션을 시작하기 전에 데이터베이스를 Docker Compose를 사용하여 설정해야 합니다. 다음 명령어를 사용하여 각 서버의 데이터베이스를 실행합니다.
 
 ```
 docker-compose -f ./auth-server/docker-compose-auth.yml up -d
@@ -35,6 +41,80 @@ docker-compose -f ./auth-server/docker-compose-auth.yml up -d
 docker-compose -f ./resource-server/docker-compose-resource.yml up -d
 ```
 
+4. Redis 패스워드 설정
+```
+1) docker exec -it [CONTAINER ID] redis-cli
+  (위 명령어가 실행되지 않을 경우, 아래 명령어를 실행해주세요.)
+  winpty docker exec -it [CONTAINER ID] redis-cli
+
+2) config get requirepass
+3) config set requirepass [PASSWORD]
+4) config get requirepass
+5) exit
+6) winpty docker exec -it [CONTAINER ID] redis-cli
+7) auth [PASSWORD]
+```
+5. .env 파일 설정
+    <details>
+        <summary><b>환경설정 세부내용</b></summary><br>
+      
+         .env.example과 같이 값을 설정합니다.
+       인증서버 .env
+       ```
+        // DB 관련 설정
+        DB_HOST=${DB_HOST}
+        DB_PORT=${DB_PORT}
+        DB_CONTAINER_NAME=${DB_CONTAINER_NAME}
+        DB_NAME=${DB_NAME}
+        DB_USER=${DB_USER}
+        DB_PASSWORD=${DB_PASSWORD}
+        
+        // JWT 관련 설정
+        JWT_SECRET_KEY=${JWT_SECRET_KEY}
+        JWT_ISSUER=${JWT_ISSUER}
+        ACCESS_TOKEN_VALID_MILLI_SEC=${ACCESS_TOKEN_VALID_MILLI_SEC}
+        REFRESH_TOKEN_VALID_MILLI_SEC=${REFRESH_TOKEN_VALID_MILLI_SEC}
+        
+        CLAIM_USERNAME=${CLAIM_USERNAME}
+        
+        // REDIS 관련 설정
+        REDIS_HOST=${REDIS_HOST}
+        REDIS_PORT=${REDIS_PORT}
+        REDIS_CONTAINER_NAME=${REDIS_CONTAINER_NAME}
+        REDIS_PASSWORD=${REDIS_PASSWORD}
+        
+        // 서버 포트 설정
+        SERVER_PORT=${SERVER_PORT}
+        
+        // gRPC 서버 포트 설정
+        GRPC_SERVER_PORT=${GRPC_SERVER_PORT}
+       ```
+    
+    <br>
+    
+       자원서버 .env
+       ```
+           // DB 관련 설정
+        DB_HOST=${DB_HOST}
+        DB_PORT=${DB_PORT}
+        DB_CONTAINER_NAME=${DB_CONTAINER_NAME}
+        DB_NAME=${DB_NAME}
+        DB_USER=${DB_USER}
+        DB_PASSWORD=${DB_PASSWORD}
+        
+        // 서버 포트 설정
+        SERVER_PORT=${SERVER_PORT}
+        
+        // gRPC 관련 설정
+        GRPC_HOST=${GRPC_HOST}
+        
+        GRPC_AUTH_SERVER_PORT=${GRPC_AUTH_SERVER_PORT}
+        
+        GRPC_RESOURCE_SERVER_PORT=${GRPC_RESOURCE_SERVER_PORT}
+       ```
+    
+    </details>
+  
 ## ERD
 
 인증서버 ERD
