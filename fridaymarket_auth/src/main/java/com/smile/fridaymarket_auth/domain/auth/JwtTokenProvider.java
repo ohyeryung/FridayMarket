@@ -144,17 +144,23 @@ public class JwtTokenProvider {
         new ObjectMapper().writeValue(response.getWriter(), errorResponse);
     }
 
-    public boolean isValidAccessToken(String accessToken) {
-
+    /**
+     * JWT 토큰의 유효성을 검사합니다.
+     *
+     * @param token JWT 토큰
+     * @return 유효한 토큰을 DecodedJWT로 반환, 유효하지 않으면 Optional.empty()
+     */
+    public Optional<DecodedJWT> isValidToken(String token) {
+        DecodedJWT jwt = null;
         try {
-            JWTVerifier verifier = JWT.require(generateAlgorithm(JWT_SECRET))
-                    .build();
-            DecodedJWT jwt = verifier.verify(accessToken);
-            return jwt != null;  // jwt가 null이 아니라면 유효한 토큰
-        } catch (JWTVerificationException e) {
-            log.info("JWT 검증 오류: {}", e.getMessage());
+            // JWT 토큰 검증을 위한 JWTVerifier 생성
+            JWTVerifier verifier = JWT.require(generateAlgorithm(JWT_SECRET)).build();
+            jwt = verifier.verify(token);
+        } catch (TokenExpiredException e) {
+            // JWT 토큰 만료된 경우 처리
+            return Optional.empty();
         }
-        return false;
+        return Optional.ofNullable(jwt);
     }
 
     /**
