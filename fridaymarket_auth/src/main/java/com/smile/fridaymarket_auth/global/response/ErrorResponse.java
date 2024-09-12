@@ -18,6 +18,12 @@ public class ErrorResponse {
         this.message = message;
     }
 
+    public ErrorResponse(boolean success, String message, String bad_request) {
+        this.success = success;
+        this.httpStatus = HttpStatus.valueOf(bad_request);
+        this.message = message;
+    }
+
     static public ErrorResponse create() {
 
         return new ErrorResponse();
