@@ -4,11 +4,13 @@ package com.smile.fridaymarket_auth.domain.auth;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smile.fridaymarket_auth.domain.auth.token.service.JwtTokenUtils;
+import com.smile.fridaymarket_auth.global.exception.CustomJwtException;
 import com.smile.fridaymarket_auth.global.response.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -40,7 +42,6 @@ public class JwtTokenProvider {
 
     private final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
     private final UserDetailsServiceImpl userDetailsService;
-
     private static final String TOKEN_PREFIX = "Bearer "; // JWT 토큰의 접두사
 
     /**
@@ -91,13 +92,13 @@ public class JwtTokenProvider {
         DecodedJWT decodedJWT = isValidToken(accessToken, response)
                 .orElseThrow(() -> new IllegalArgumentException("유효한 토큰이 아닙니다."));
 
-        log.info("decodedJWT.getClaim() : {}", decodedJWT.getClaim(JwtTokenUtils.CLAIM_NAME));
         return decodedJWT
                 .getClaim(JwtTokenUtils.CLAIM_NAME)
                 .asString();
     }
 
     public String getUsernameFromToken(String accessToken) {
+
         return String.valueOf(JWT.require(generateAlgorithm(JWT_SECRET))
                 .build()
                 .verify(accessToken)
@@ -151,17 +152,24 @@ public class JwtTokenProvider {
      * @return 유효한 토큰을 DecodedJWT로 반환, 유효하지 않으면 Optional.empty()
      */
     public Optional<DecodedJWT> isValidToken(String token) {
-        DecodedJWT jwt = null;
+
         try {
             // JWT 토큰 검증을 위한 JWTVerifier 생성
             JWTVerifier verifier = JWT.require(generateAlgorithm(JWT_SECRET)).build();
-            jwt = verifier.verify(token);
+            DecodedJWT jwt = verifier.verify(token); // 토큰 검증
+            return Optional.of(jwt);  // 검증 성공 시 토큰 반환
         } catch (TokenExpiredException e) {
-            // JWT 토큰 만료된 경우 처리
-            return Optional.empty();
+            log.error("JWT 토큰이 만료되었습니다: {}", e.getMessage());
+            throw new CustomJwtException("만료된 토큰입니다.", e);  // 사용자 정의 예외 던짐
+        } catch (JWTDecodeException e) {
+            log.error("JWT 토큰 형식이 잘못되었습니다: {}", e.getMessage());
+            throw new CustomJwtException("잘못된 토큰 형식입니다.", e);  // 사용자 정의 예외 던짐
+        } catch (JWTVerificationException e) {
+            log.error("JWT 토큰이 유효하지 않습니다: {}", e.getMessage());
+            throw new CustomJwtException("유효하지 않은 토큰입니다.", e);  // 사용자 정의 예외 던짐
         }
-        return Optional.ofNullable(jwt);
     }
+
 
     /**
      * accessToken 의 만료시간 초기화
