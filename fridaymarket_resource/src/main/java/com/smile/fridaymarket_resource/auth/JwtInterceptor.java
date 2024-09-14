@@ -2,7 +2,7 @@ package com.smile.fridaymarket_resource.auth;
 
 import com.smile.fridaymarket_resource.global.exception.CustomException;
 import com.smile.fridaymarket_resource.global.exception.ErrorCode;
-import com.smile.fridaymarket_resource.grpc.service.GrpcAuthService;
+import com.smile.fridaymarket_resource.grpc.service.GrpcAuthClientService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @RequiredArgsConstructor
 public class JwtInterceptor implements HandlerInterceptor {
 
-    private final GrpcAuthService grpcAuthService;
+    private final GrpcAuthClientService grpcAuthClientService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
@@ -43,7 +43,7 @@ public class JwtInterceptor implements HandlerInterceptor {
 
     private UserResponse validateToken(String accessToken) {
 
-        UserResponse user = grpcAuthService.authToken(accessToken);
+        UserResponse user = grpcAuthClientService.authToken(accessToken);
         if (!user.success()) {
             throw new CustomException(ErrorCode.TOKEN_NOT_VALID);
         }

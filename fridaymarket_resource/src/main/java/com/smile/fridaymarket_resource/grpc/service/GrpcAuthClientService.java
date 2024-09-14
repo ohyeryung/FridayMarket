@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-public class GrpcAuthService {
+public class GrpcAuthClientService {
 
     @GrpcClient("auth")
     private AuthTokenServiceGrpc.AuthTokenServiceBlockingStub authStub;

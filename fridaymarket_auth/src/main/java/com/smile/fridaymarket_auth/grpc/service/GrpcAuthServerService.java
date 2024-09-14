@@ -10,14 +10,13 @@ import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
 @Slf4j
 @GrpcService
 @RequiredArgsConstructor
-public class GrpcAuthService extends AuthTokenServiceGrpc.AuthTokenServiceImplBase {
+public class GrpcAuthServerService extends AuthTokenServiceGrpc.AuthTokenServiceImplBase {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final UserReader userReader;
