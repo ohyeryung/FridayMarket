@@ -1,7 +1,9 @@
-package com.smile.fridaymarket_resource.grpc.filter;
+package com.smile.fridaymarket_resource.grpc.interceptor;
 
 import io.grpc.*;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class JwtClientInterceptor implements ClientInterceptor {
 
     private static final Metadata.Key<String> AUTHORIZATION_HEADER = Metadata.Key.of("Authorization", Metadata.ASCII_STRING_MARSHALLER);
@@ -16,7 +18,6 @@ public class JwtClientInterceptor implements ClientInterceptor {
     @Override
     public <ReqT, RespT> ClientCall<ReqT, RespT> interceptCall(MethodDescriptor<ReqT, RespT> methodDescriptor,
                                                                CallOptions callOptions, Channel channel) {
-
         return new ForwardingClientCall.SimpleForwardingClientCall<ReqT, RespT>(channel.newCall(methodDescriptor, callOptions)) {
             @Override
             public void start(Listener<RespT> responseListener, Metadata headers) {
