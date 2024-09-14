@@ -64,17 +64,9 @@ public class OrderInvoice extends Timestamped {
         this.orderNo = orderTypePrefix + "-" + date + "-" + orderIdSuffix;
     }
 
-//    // toBuilder 메서드 수동 구현
-//    public OrderInvoiceBuilder toBuilder() {
-//        return OrderInvoice.builder()
-//                .id(this.id)
-//                .orderNo(this.orderNo)
-//                .userId(this.userId)
-//                .orderType(this.orderType)
-//                .orderStatus(this.orderStatus)
-//                .product(this.product)
-//                .amount(this.amount)
-//                .deliveryAddress(this.deliveryAddress)
-//                .isDeleted(this.isDeleted);
-//    }
+    // 입금 완료 상태 값 변경
+    public void updateStatusIsPaymentReceived() {
+        this.orderStatus = OrderStatus.PAYMENT_RECEIVED;
+    }
+
 }
