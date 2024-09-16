@@ -9,4 +9,14 @@ public interface OrderService {
 
     void isPaymentReceived(String userId, Long orderId);
 
+    void isShipped(Long orderId);
+
+    void isReceived(Long orderId);
+
+    void isPaymentSent(Long orderId);
+
+    void cancelRequestByUser(String userId, Long orderId);
+
+    void cancelOrder(Long orderId);
+
 }
