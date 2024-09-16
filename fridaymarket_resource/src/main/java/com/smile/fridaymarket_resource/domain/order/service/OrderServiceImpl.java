@@ -2,6 +2,7 @@ package com.smile.fridaymarket_resource.domain.order.service;
 
 import com.smile.fridaymarket_resource.domain.order.dto.OrderCreateRequest;
 import com.smile.fridaymarket_resource.domain.order.dto.OrderProductRequest;
+import com.smile.fridaymarket_resource.domain.order.dto.OrderResponse;
 import com.smile.fridaymarket_resource.domain.order.entity.CancelRequest;
 import com.smile.fridaymarket_resource.domain.order.entity.OrderInvoice;
 import com.smile.fridaymarket_resource.domain.order.entity.OrderProduct;
@@ -220,6 +221,27 @@ public class OrderServiceImpl implements OrderService {
 
         // 4. 주문에 대한 상태값 취소 상태로 변경 및 softDelete 처리
         orderInvoice.updateStatusCanceled();
+
+    }
+
+    /**
+     * 8. 주문 상세 조회
+     *
+     * @param userId 유저 Id
+     * @param orderId 주문 Id
+     * @return 조회 요청한 주문
+     */
+    @Override
+    public OrderResponse getOrderInvoice(String userId, Long orderId) {
+
+        // 1. 주문 존재 여부 조회
+        OrderInvoice orderInvoice = orderReader.getOrderInvoice(orderId);
+
+        // 2. 본인 주문인지 검증
+        verifyOrderOwnership(userId, orderInvoice);
+
+        // 3. 응답 객체로 변환
+        return orderInvoice.toResponseDto(orderInvoice);
 
     }
 
