@@ -34,4 +34,34 @@ public class OrderController extends BaseController {
         return SuccessResponse.successWithNoData("입금 완료되었습니다.");
     }
 
+    @RequestMapping(value = "/{orderId}/isShipped", method = RequestMethod.PATCH)
+    public SuccessResponse<String> isShipped(@PathVariable Long orderId) {
+        orderService.isShipped(orderId);
+        return SuccessResponse.successWithNoData("발송 완료되었습니다.");
+    }
+
+    @RequestMapping(value = "/{orderId}/isReceived", method = RequestMethod.PATCH)
+    public SuccessResponse<String> isReceived(@PathVariable Long orderId) {
+        orderService.isReceived(orderId);
+        return SuccessResponse.successWithNoData("수령 완료되었습니다.");
+    }
+
+    @RequestMapping(value = "/{orderId}/isPaymentSent", method = RequestMethod.PATCH)
+    public SuccessResponse<String> isPaymentSent(@PathVariable Long orderId) {
+        orderService.isPaymentSent(orderId);
+        return SuccessResponse.successWithNoData("송금 완료되었습니다.");
+    }
+
+    @RequestMapping(value = "/{orderId}/request/cancel", method = RequestMethod.POST)
+    public SuccessResponse<String> cancelRequestByUser(HttpServletRequest request, @PathVariable Long orderId) {
+        UserResponse user = getUser(request);
+        orderService.cancelRequestByUser(user.userId(), orderId);
+        return SuccessResponse.successWithNoData("주문 취소 요청 완료되었습니다.");
+    }
+
+    @RequestMapping(value = "/{orderId}/cancel", method = RequestMethod.PATCH)
+    public SuccessResponse<String> cancelOrder(@PathVariable Long orderId) {
+        orderService.cancelOrder(orderId);
+        return SuccessResponse.successWithNoData("주문 취소 되었습니다.");
+    }
 }
