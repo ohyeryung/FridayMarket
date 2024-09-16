@@ -16,7 +16,7 @@ public class PriceReaderImpl implements PriceReader {
     private final PriceStore priceStore;
 
     /**
-     * 가격 조회
+     * 가격 조회 (DB에서 주문 타입과 가격이 같은 경우에는 기존 가격을 사용, 없다면 새로 저장)
      *
      * @param price     g당 가격
      * @param orderType 주문 타입
@@ -25,7 +25,7 @@ public class PriceReaderImpl implements PriceReader {
      */
     @Override
     public Price getPrice(BigDecimal price, OrderType orderType, String userId) {
-        // 가격 가져오기 (DB에서 주문 타입과 가격이 같은 경우에는 기존 가격을 사용)
+
         return priceRepository.findByPriceAndOrderType(price, orderType)
                 .orElseGet(() -> priceStore.saveNewPrice(price, orderType, userId));
     }

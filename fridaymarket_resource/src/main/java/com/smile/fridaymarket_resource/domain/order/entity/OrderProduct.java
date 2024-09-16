@@ -6,12 +6,14 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
 @Entity
 @Table(name = "TB_ORDER_PRODUCT")
+@Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,7 +29,7 @@ public class OrderProduct {
     private OrderType orderType;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ORDER_ID", nullable = false)
+    @JoinColumn(name = "ORDER_INVOICE_ID", nullable = false)
     private OrderInvoice orderInvoice;
 
     @ManyToOne(fetch = FetchType.LAZY)
