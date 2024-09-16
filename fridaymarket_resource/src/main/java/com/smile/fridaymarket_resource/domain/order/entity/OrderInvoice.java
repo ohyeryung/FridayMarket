@@ -1,5 +1,7 @@
 package com.smile.fridaymarket_resource.domain.order.entity;
 
+import com.smile.fridaymarket_resource.domain.order.dto.OrderProductResponse;
+import com.smile.fridaymarket_resource.domain.order.dto.OrderResponse;
 import com.smile.fridaymarket_resource.domain.order.entity.enums.OrderStatus;
 import com.smile.fridaymarket_resource.domain.order.entity.enums.OrderType;
 import com.smile.fridaymarket_resource.global.entity.Timestamped;
@@ -12,6 +14,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "TB_ORDER_INVOICE")
@@ -107,6 +110,32 @@ public class OrderInvoice extends Timestamped {
     public void updateOrderNo(String orderNo) {
 
         this.orderNo = orderNo;
+    }
+
+    // 주문 상세 조회 응답 객체 생성
+    public OrderResponse toResponseDto(OrderInvoice orderInvoice) {
+
+        // OrderProduct를 OrderProductResponse로 변환하여 리스트로 변환
+        List<OrderProductResponse> productResponseList = orderInvoice.getOrderProducts().stream()
+                .map(orderProduct -> new OrderProductResponse(
+                        orderProduct.getProduct().getProductName(),
+                        orderProduct.getPrice(),
+                        orderProduct.getQuantity()))
+                .collect(Collectors.toList());
+
+        return OrderResponse.builder()
+                .orderNo(orderInvoice.getOrderNo())
+                .userId(orderInvoice.getUserId())
+                .orderType(orderInvoice.getOrderType())
+                .orderStatus(orderInvoice.getOrderStatus())
+                .productResponses(productResponseList) // List<OrderProductResponse>로 변경된 부분
+                .amount(orderInvoice.getAmount())
+                .deliveryAddress(orderInvoice.getDeliveryAddress())
+                .createdAt(orderInvoice.getCreatedAt())
+                .updatedAt(orderInvoice.getUpdatedAt())
+                .deletedAt(orderInvoice.getDeletedAt())
+                .isDeleted(orderInvoice.getIsDeleted())
+                .build();
     }
 
 }

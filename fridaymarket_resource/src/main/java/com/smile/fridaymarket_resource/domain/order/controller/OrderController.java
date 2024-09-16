@@ -2,6 +2,7 @@ package com.smile.fridaymarket_resource.domain.order.controller;
 
 import com.smile.fridaymarket_resource.auth.UserResponse;
 import com.smile.fridaymarket_resource.domain.order.dto.OrderCreateRequest;
+import com.smile.fridaymarket_resource.domain.order.dto.OrderResponse;
 import com.smile.fridaymarket_resource.domain.order.service.OrderService;
 import com.smile.fridaymarket_resource.global.response.SuccessResponse;
 import jakarta.servlet.http.HttpServletRequest;
@@ -63,5 +64,11 @@ public class OrderController extends BaseController {
     public SuccessResponse<String> cancelOrder(@PathVariable Long orderId) {
         orderService.cancelOrder(orderId);
         return SuccessResponse.successWithNoData("주문 취소 되었습니다.");
+    }
+
+    @RequestMapping(value = "/{orderId}", method = RequestMethod.GET)
+    public SuccessResponse<OrderResponse> getOrderInvoice(HttpServletRequest request, @PathVariable Long orderId) {
+        UserResponse user = getUser(request);
+        return SuccessResponse.successWithData(orderService.getOrderInvoice(user.userId(), orderId));
     }
 }

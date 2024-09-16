@@ -1,6 +1,7 @@
 package com.smile.fridaymarket_resource.domain.order.service;
 
 import com.smile.fridaymarket_resource.domain.order.dto.OrderCreateRequest;
+import com.smile.fridaymarket_resource.domain.order.dto.OrderResponse;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,5 +19,7 @@ public interface OrderService {
     void cancelRequestByUser(String userId, Long orderId);
 
     void cancelOrder(Long orderId);
+
+    OrderResponse getOrderInvoice(String userId, Long orderId);
 
 }
