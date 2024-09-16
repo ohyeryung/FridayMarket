@@ -16,7 +16,6 @@ import java.util.UUID;
 @Entity
 @Table(name = "TB_ORDER_INVOICE")
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -88,7 +87,6 @@ public class OrderInvoice extends Timestamped {
     public void updateStatusIsPaymentSent() {
 
         this.orderStatus = OrderStatus.PAYMENT_SENT;
-
     }
 
     // 주문 취소 상태 값 변경
@@ -97,6 +95,18 @@ public class OrderInvoice extends Timestamped {
         this.isDeleted = true;
         this.orderStatus = OrderStatus.CANCELED;
         this.softDelete();
+    }
+
+    // 계산된 주문 총액 업데이트
+    public void updateAmount(BigDecimal totalAmount) {
+
+        this.amount = totalAmount;
+    }
+
+    // 주문 번호 최종 업데이트
+    public void updateOrderNo(String orderNo) {
+
+        this.orderNo = orderNo;
     }
 
 }

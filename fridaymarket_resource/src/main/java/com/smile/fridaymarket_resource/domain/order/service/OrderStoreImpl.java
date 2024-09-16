@@ -53,7 +53,7 @@ public class OrderStoreImpl implements OrderStore {
         // 주문 번호 생성 및 설정
         String orderNo = generateOrderNo(orderInvoice.getId(), orderInvoice.getOrderType());
 
-        orderInvoice.setOrderNo(orderNo);
+        orderInvoice.updateOrderNo(orderNo);
 
         // 주문서 업데이트
         return orderInvoiceRepository.save(orderInvoice);
