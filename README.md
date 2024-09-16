@@ -1,14 +1,18 @@
-# 금방주식회사 백엔드 기업과제_FridayMarket
-금을 판매하고 구매하는 웹 서비스입니다.
+## 목차
 
-<br>
+> 1. [서비스 소개](#-서비스-소개)
+> 2. [프로젝트 환경](#-프로젝트-환경)
+> 3. [Quick Start](#quick-start)
+> 4. [ERD](#erd)
+> 5. [API 명세서](#api-명세서)
+> 6. [트러블슈팅](#트러블슈팅)
 
-## 🚀 도전 과제
+<br/>
 
-금을 한창 열심히 팔고 있던 알레테이아는, 금을 판매하고 구매하는 서비스를 제공하기로 결정했습니다!
-알레테이아는 앱을 통해 구매, 판매 주문을 관리하려고 합니다! 또한 미래에 서비스가 확장될 것을 고려하여,
-인증을 담당하는 서버를 별도로 구축하기로 결정했는데요,
-과연 어떻게 해야 잘 만들 수 있을까요?
+## 💰 서비스 소개
+게시된 금 상품을 보고 사용자가 구매 또는 판매할 수 있는 온라인 금은방 웹 서비스입니다.
+```MSA 관점```에서 유저를 생성하고 토큰을 검증하는 인증 서버와 실제 비즈니스 로직이 구현되는 자원 서버로 분리하여 개발하였습니다.
+각 서버 간 통신 방법으로는 ```gRPC 통신 방법```을 사용하였습니다.
 
 <br>
 
@@ -110,7 +114,9 @@ docker-compose -f ./resource-server/docker-compose-resource.yml up -d
     
     </details>
   
-## ERD
+<br/>
+
+## ⛓️ ERD
 
 인증서버 ERD
 
@@ -124,7 +130,7 @@ docker-compose -f ./resource-server/docker-compose-resource.yml up -d
 
 <br>
 
-## API [Postman API](https://documenter.getpostman.com/view/20456478/2sAXqmB5s5)
+## 📋 API [Postman API](https://documenter.getpostman.com/view/20456478/2sAXqmB5s5)
 
 <img width="954" alt="인증서버 API 명세" src="https://github.com/user-attachments/assets/501ee75c-51c7-4e36-bb9b-50c48fc80782">
 
@@ -135,7 +141,7 @@ docker-compose -f ./resource-server/docker-compose-resource.yml up -d
 
 <br>
 
-## 트러블슈팅
+## 💥 트러블슈팅
 
 #### 회원가입 시 발생한 오류 (https://github.com/ohyeryung/FridayMarket/pull/5)
 #### 로그인 기능 구현 시 발생한 오류 (https://github.com/ohyeryung/FridayMarket/pull/9)
