@@ -1,8 +1,11 @@
 package com.smile.fridaymarket_resource.domain.order.service;
 
 import com.smile.fridaymarket_resource.domain.order.dto.OrderCreateRequest;
+import com.smile.fridaymarket_resource.domain.order.dto.OrderPaging;
 import com.smile.fridaymarket_resource.domain.order.dto.OrderResponse;
 import org.springframework.stereotype.Service;
+
+import org.springframework.data.domain.Pageable;
 
 @Service
 public interface OrderService {
@@ -21,5 +24,7 @@ public interface OrderService {
     void cancelOrder(Long orderId);
 
     OrderResponse getOrderInvoice(String userId, Long orderId);
+
+    OrderPaging getOrderList(String userId, Pageable pageable);
 
 }

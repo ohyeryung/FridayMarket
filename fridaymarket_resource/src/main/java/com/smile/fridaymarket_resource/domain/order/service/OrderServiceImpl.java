@@ -1,13 +1,12 @@
 package com.smile.fridaymarket_resource.domain.order.service;
 
-import com.smile.fridaymarket_resource.domain.order.dto.OrderCreateRequest;
-import com.smile.fridaymarket_resource.domain.order.dto.OrderProductRequest;
-import com.smile.fridaymarket_resource.domain.order.dto.OrderResponse;
+import com.smile.fridaymarket_resource.domain.order.dto.*;
 import com.smile.fridaymarket_resource.domain.order.entity.CancelRequest;
 import com.smile.fridaymarket_resource.domain.order.entity.OrderInvoice;
 import com.smile.fridaymarket_resource.domain.order.entity.OrderProduct;
 import com.smile.fridaymarket_resource.domain.order.entity.enums.OrderStatus;
 import com.smile.fridaymarket_resource.domain.order.repository.CancelRequestRepository;
+import com.smile.fridaymarket_resource.domain.order.repository.OrderInvoiceRepository;
 import com.smile.fridaymarket_resource.domain.price.entity.Price;
 import com.smile.fridaymarket_resource.domain.price.service.PriceReader;
 import com.smile.fridaymarket_resource.domain.product.entity.Product;
@@ -15,6 +14,8 @@ import com.smile.fridaymarket_resource.domain.product.service.ProductReader;
 import com.smile.fridaymarket_resource.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,11 +37,12 @@ public class OrderServiceImpl implements OrderService {
     private final OrderStore orderStore;
     private final OrderReader orderReader;
     private final CancelRequestRepository cancelRequestRepository;
+    private final OrderInvoiceRepository orderInvoiceRepository;
 
     /**
      * 1. 주문 등록
      *
-     * @param userId 유저 Id
+     * @param userId  유저 Id
      * @param request 주문 타입, 상품 Id, 수량, g당 가격, 배송지 정보로 주문 등록 요청
      */
     @Override
@@ -89,7 +91,7 @@ public class OrderServiceImpl implements OrderService {
     /**
      * 2. 주문 상태값 변경 (입금 완료)
      *
-     * @param userId 유저 Id
+     * @param userId  유저 Id
      * @param orderId 주문 Id
      */
     @Override
@@ -115,6 +117,7 @@ public class OrderServiceImpl implements OrderService {
     /**
      * 3. 주문의 송장 입력 받았다는 가정 하에 주문에 대한 상태값을 발송 완료로 변경
      * TODO : 관리자만 가능, 권한 설정 필요
+     *
      * @param orderId 주문 Id
      */
     @Override
@@ -135,6 +138,7 @@ public class OrderServiceImpl implements OrderService {
     /**
      * 4. 관리자가 판매자가 보낸 상품을 수령완료 한 경우 주문에 대한 상태값을 수령 완료로 변경
      * TODO : 관리자만 가능, 권한 설정 필요
+     *
      * @param orderId 주문 Id
      */
     @Override
@@ -155,6 +159,7 @@ public class OrderServiceImpl implements OrderService {
     /**
      * 5. 관리자가 판매자의 상품 검수 및 정상 상품의 경우 송금 완료 후 해당 주문의 상태값을 송금 완료로 변경
      * TODO : 관리자만 가능, 권한 설정 필요
+     *
      * @param orderId 주문 Id
      */
     @Override
@@ -175,7 +180,7 @@ public class OrderServiceImpl implements OrderService {
     /**
      * 6. 사용자가 주문 취소 요청을 보냄, 취소 요청 객체 생성
      *
-     * @param userId 유저 Id
+     * @param userId  유저 Id
      * @param orderId 주문 Id
      */
     @Override
@@ -202,6 +207,7 @@ public class OrderServiceImpl implements OrderService {
     /**
      * 7. 관리자가 주문 취소 요청을 확인하고 실제로 주문을 삭제하지는 않고 상태값만 변경
      * TODO : 관리자만 가능, 권한 설정 필요
+     *
      * @param orderId 주문 Id
      */
     @Override
@@ -211,15 +217,12 @@ public class OrderServiceImpl implements OrderService {
         // 1. 주문 존재 여부 검증
         OrderInvoice orderInvoice = orderReader.getOrderInvoice(orderId);
 
-        // 2. 취소 요청 확인
+        // 2. 취소 요청 확인 및 상태 업데이트
         CancelRequest cancelRequest = cancelRequestRepository.findByOrderId(orderId).orElseThrow(
-                () -> new CustomException(CANCEL_REQUEST_NOT_FOUND)
-        );
-
-        // 3. 취소 요청에 대한 승인 완료 상태값 변경
+                () -> new CustomException(CANCEL_REQUEST_NOT_FOUND));
         cancelRequest.updateStatus();
 
-        // 4. 주문에 대한 상태값 취소 상태로 변경 및 softDelete 처리
+        // 3. 주문에 대한 상태값 취소 상태로 변경 및 softDelete 처리
         orderInvoice.updateStatusCanceled();
 
     }
@@ -227,7 +230,7 @@ public class OrderServiceImpl implements OrderService {
     /**
      * 8. 주문 상세 조회
      *
-     * @param userId 유저 Id
+     * @param userId  유저 Id
      * @param orderId 주문 Id
      * @return 조회 요청한 주문
      */
@@ -246,9 +249,23 @@ public class OrderServiceImpl implements OrderService {
     }
 
     /**
-     * 본인의 주문인지 검증
      *
      * @param userId 유저 Id
+     * @param pageable 페이징 처리 data
+     * @return 페이징처리 된 주문 내역 목록 반환
+     */
+    @Override
+
+    public OrderPaging getOrderList(String userId, Pageable pageable) {
+
+        Page<OrderList> orderList = orderInvoiceRepository.getOrderList(userId, pageable);
+        return new OrderPaging(orderList);
+    }
+
+    /**
+     * 본인의 주문인지 검증
+     *
+     * @param userId       유저 Id
      * @param orderInvoice 주문 객체
      */
     private void verifyOrderOwnership(String userId, OrderInvoice orderInvoice) {
