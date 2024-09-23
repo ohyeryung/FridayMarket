@@ -2,6 +2,7 @@ package com.smile.fridaymarket_resource.domain.order.controller;
 
 import com.smile.fridaymarket_resource.auth.UserResponse;
 import com.smile.fridaymarket_resource.domain.order.dto.OrderCreateRequest;
+import com.smile.fridaymarket_resource.domain.order.dto.OrderPaging;
 import com.smile.fridaymarket_resource.domain.order.dto.OrderResponse;
 import com.smile.fridaymarket_resource.domain.order.service.OrderService;
 import com.smile.fridaymarket_resource.global.response.SuccessResponse;
@@ -10,6 +11,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import org.springframework.data.domain.Pageable;
 
 @Slf4j
 @RestController
@@ -70,5 +73,11 @@ public class OrderController extends BaseController {
     public SuccessResponse<OrderResponse> getOrderInvoice(HttpServletRequest request, @PathVariable Long orderId) {
         UserResponse user = getUser(request);
         return SuccessResponse.successWithData(orderService.getOrderInvoice(user.userId(), orderId));
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public SuccessResponse<OrderPaging> getOrderList(HttpServletRequest request, Pageable pageable) {
+        UserResponse user = getUser(request);
+        return SuccessResponse.successWithData(orderService.getOrderList(user.userId(), pageable));
     }
 }
