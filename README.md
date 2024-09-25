@@ -149,4 +149,5 @@ docker-compose -f ./resource-server/docker-compose-resource.yml up -d
 #### AccessToken 재발급 테스트 시 발생한 오류 (https://github.com/ohyeryung/FridayMarket/pull/24)
 #### 로그아웃 기능 구현 시 발생한 오류 (https://github.com/ohyeryung/FridayMarket/pull/26)
 #### gRPC 통신 구현 중 발생한 오류 (https://github.com/ohyeryung/FridayMarket/pull/28)
+#### 주문 내역 목록 조회 기능 구현 중 발생한 오류 (https://github.com/ohyeryung/FridayMarket/pull/47)
 
