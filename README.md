@@ -2,10 +2,11 @@
 
 > 1. [서비스 소개](#-서비스-소개)
 > 2. [프로젝트 환경](#%EF%B8%8F-프로젝트-환경)
-> 3. [Quick Start](#quick-start)
-> 4. [ERD](#%EF%B8%8F-erd)
-> 5. [API 명세서](#-api-postman-api)
-> 6. [트러블슈팅](#-트러블슈팅)
+> 3. [주요 기능]
+> 4. [Quick Start](#quick-start)
+> 5. [ERD](#%EF%B8%8F-erd)
+> 6. [API 명세서](#-api-postman-api)
+> 7. [트러블슈팅](#-트러블슈팅)
 
 
 <br/>
@@ -28,6 +29,15 @@
 | ![Redis](https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white)    | Redis 6.0        |
 
 <br>
+
+## 주요 기능
+1. MSA 관점에서 인증 서버와 자원 서버를 분리하여 개발하였습니다.
+2. 인증 서버와 자원 서버 간의 통신은 gRPC 통신으로 구현하였습니다.
+3. JWT를 활용한 accessToken, RefreshToken을 발급하여 인증, 인가를 구현하였습니다.
+4. 로그아웃 시에는 accessToken과 RefreshToken을 무력화하여 구현하였습니다.
+5. 유저는 등록된 상품에 대한 구매 주문과 판매 주문을 등록합니다.
+6. 주문의 상태값 변경 가능합니다.
+7. 본인이 등록한 주문에 한하여 주문 목록 조회 및 상세 조회가 가능합니다.
 
 ## Quick Start
 
